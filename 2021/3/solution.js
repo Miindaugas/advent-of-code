@@ -31,9 +31,44 @@ const input = ["100101001000", "011101110101", "000001010101", "001001010001", "
     });
 
     const binaryStringToDecimal = (binary) => parseInt(binary.join(''), 2);
-    
+
     gamma = binaryStringToDecimal(data.log.map(obj => find(obj, ">")));
     epsilon = binaryStringToDecimal(data.log.map(obj => find(obj, "<")));
-    
+
     console.info(gamma * epsilon)
+}
+
+// Part Two
+{
+    const Criteria = {
+        oxygenBitCriteria: 1, co2BitCriteria: 2,
+    }
+
+    const getCriteria = (bit, criteria) => {
+        switch (criteria) {
+            case Criteria.oxygenBitCriteria:
+                return bit.filter(x => x === '0').length > bit.filter(x => x === '1').length ? '0' : '1';
+            case Criteria.co2BitCriteria:
+                return bit.filter(x => x === '0').length <= bit.filter(x => x === '1').length ? '0' : '1';
+            default:
+                return null;
+        }
+    }
+
+    const calculateRating = (criteria) => {
+        let numbers = input;
+        for (let i = 0; i < 12; i++) {
+            const bit = numbers.map(number => number[i]);
+            numbers = numbers.filter(number => number[i] === getCriteria(bit, criteria));
+            if (numbers.length <= 1) break;
+        }
+        return numbers[0]
+    }
+
+    const binaryStringToDecimal = (binary) => parseInt(binary, 2);
+
+    const oxygenRating = calculateRating(Criteria.oxygenBitCriteria);
+    const co2Rating = calculateRating(Criteria.co2BitCriteria);
+
+    console.info(binaryStringToDecimal(oxygenRating) * binaryStringToDecimal(co2Rating));
 }
